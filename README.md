@@ -54,7 +54,7 @@ npm i k-form-design --save
 // 在main.js引入
 
 import KFormDesign from 'k-form-design'
-import 'k-form-design/lib/k-form-design.css'
+import 'k-form-design/lib/y-form.css'
 Vue.use(KFormDesign)
 ```
 

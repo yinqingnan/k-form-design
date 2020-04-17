@@ -82,7 +82,7 @@ let codeHtmlFront = `<!DOCTYPE html>
 <head>
   <title>表单设计器kcz</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="http://unpkg.com/k-form-design/lib/k-form-design.css">
+  <link rel="stylesheet" href="http://unpkg.com/k-form-design/lib/y-form.css">
 </head>
 
 <body>

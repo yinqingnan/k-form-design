@@ -34,7 +34,7 @@ main.js引入
 完整引入
 ```javascript
 import KFormDesign from 'k-form-design'
-import 'k-form-design/lib/k-form-design.css'
+import 'k-form-design/lib/y-form.css'
 Vue.use(KFormDesign)
 
 ```
@@ -43,7 +43,7 @@ Vue.use(KFormDesign)
 <!-- 局部导入
 ```javascript
 import { KFormDesign, KFormBuild } from "k-form-design";
-import "k-form-design/lib/k-form-design.css";
+import "k-form-design/lib/y-form.css";
 
 Vue.use(KFormDesign);
 Vue.use(KFormBuild);
