@@ -265,15 +265,17 @@ export default {
       selectItem: {
         key: ""
       },
-      basicsArray:[]
+      basicsArray: []
     };
   },
-  created(){
-      this.$api.getCList().then(res => {
-          if(res.code == 0){
-              this.basicsArray = res.data.filter(item => this.fields.includes(item.type));
-          }
-      })
+  created() {
+    this.$api.getCList().then(res => {
+      if (res.code == 0) {
+        this.basicsArray = res.data.filter(item =>
+          this.fields.includes(item.type)
+        );
+      }
+    });
   },
   components: {
     kHeader,
@@ -285,7 +287,7 @@ export default {
     importJsonModal,
     previewModal,
     kFormComponentPanel,
-    formItemProperties,
+    formItemProperties
     // formProperties
     // draggable
   },

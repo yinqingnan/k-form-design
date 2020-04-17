@@ -1,4 +1,6 @@
 module.exports = {
+  lintOnSave: false, //关闭eslint效验报错
+  runtimeCompiler: true, //关键点在这
   pages: {
     index: {
       // 页面入口
