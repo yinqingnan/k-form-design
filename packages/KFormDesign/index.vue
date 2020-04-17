@@ -39,11 +39,7 @@
             :defaultActiveKey="collapseDefaultActiveKey"
           >
             <!-- 基础控件 start -->
-            <a-collapse-panel
-              v-if="basicsArray.length > 0"
-              header="基础控件"
-              key="1"
-            >
+            <a-collapse-panel v-if="isShow" header="基础控件" key="1">
               <collapseItem
                 :list="basicsArray"
                 @generateKey="generateKey"
@@ -265,7 +261,8 @@ export default {
       selectItem: {
         key: ""
       },
-      basicsArray: []
+      basicsArray: [],
+      isShow: false
     };
   },
   created() {
@@ -274,6 +271,7 @@ export default {
         this.basicsArray = res.data.filter(item =>
           this.fields.includes(item.type)
         );
+        this.isShow = true;
       }
     });
   },
