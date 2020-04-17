@@ -128,10 +128,10 @@
 
         <!-- 右侧控件属性区域 start -->
         <aside class="right">
-          <formProperties
+          <!-- <formProperties
             :config="data.config"
             :previewOptions="previewOptions"
-          />
+          /> -->
           <formItemProperties
             :class="{ 'show-properties': showPropertie }"
             class="form-item-properties"
@@ -164,13 +164,13 @@ import previewModal from "../KFormPreview/index.vue";
 // import draggable from "vuedraggable";
 import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
 import {
-  basicsList,
+  // basicsList,
   // highList,
   layoutList,
   customComponents
 } from "./config/formItemsConfig";
 import formItemProperties from "./module/formItemProperties";
-import formProperties from "./module/formProperties";
+// import formProperties from "./module/formProperties";
 export default {
   name: "KFormDesign",
   props: {
@@ -264,8 +264,16 @@ export default {
       },
       selectItem: {
         key: ""
-      }
+      },
+      basicsArray:[]
     };
+  },
+  created(){
+      this.$api.getCList().then(res => {
+          if(res.code == 0){
+              this.basicsArray = res.data.filter(item => this.fields.includes(item.type));
+          }
+      })
   },
   components: {
     kHeader,
@@ -278,14 +286,14 @@ export default {
     previewModal,
     kFormComponentPanel,
     formItemProperties,
-    formProperties
+    // formProperties
     // draggable
   },
   computed: {
-    basicsArray() {
-      // 计算需要显示的基础字段
-      return basicsList.filter(item => this.fields.includes(item.type));
-    },
+    // basicsArray() {
+    //   // 计算需要显示的基础字段
+    //   return basicsList.filter(item => this.fields.includes(item.type));
+    // },
     layoutArray() {
       // 计算需要显示的布局字段
       return layoutList.filter(item => this.fields.includes(item.type));
