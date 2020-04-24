@@ -49,7 +49,7 @@
             </a-collapse-panel>
             <!-- 基础控件 end -->
             <!-- 自定义控件 start -->
-            <a-collapse-panel
+            <!-- <a-collapse-panel
               v-if="customComponents.list.length > 0"
               :header="customComponents.title"
               key="3"
@@ -60,7 +60,7 @@
                 @handleListPush="handleListPush"
                 @start="handleStart"
               />
-            </a-collapse-panel>
+            </a-collapse-panel> -->
             <!-- 自定义控件 end -->
 
             <!-- 布局控件 start -->
