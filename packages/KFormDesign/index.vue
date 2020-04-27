@@ -1,7 +1,7 @@
 <template>
   <a-config-provider :locale="locale">
     <div class="form-designer-container-9136076486841527">
-      <k-header v-if="showHead" :title="title" />
+      <!-- <k-header v-if="showHead" :title="title" /> -->
       <!-- 操作区域 start -->
       <operatingArea
         v-if="toolbarsTop"
@@ -34,50 +34,26 @@
       >
         <!-- 左侧控件区域 start -->
         <aside class="left">
-          <a-collapse
-            @change="collapseChange"
-            :defaultActiveKey="collapseDefaultActiveKey"
-          >
-            <!-- 基础控件 start -->
-            <a-collapse-panel v-if="isShow" header="基础控件" key="1">
-              <collapseItem
-                :list="basicsArray"
-                @generateKey="generateKey"
-                @handleListPush="handleListPush"
-                @start="handleStart"
-              />
-            </a-collapse-panel>
-            <!-- 基础控件 end -->
-            <!-- 自定义控件 start -->
-            <!-- <a-collapse-panel
-              v-if="customComponents.list.length > 0"
-              :header="customComponents.title"
-              key="3"
-            >
-              <collapseItem
-                :list="customComponents.list"
-                @generateKey="generateKey"
-                @handleListPush="handleListPush"
-                @start="handleStart"
-              />
-            </a-collapse-panel> -->
-            <!-- 自定义控件 end -->
+          <a-tabs defaultActiveKey="2">
+                <a-tab-pane tab="布局控件" key="1" forceRender>
+                    <collapseItem
+                      :list="layoutArray"
+                      @generateKey="generateKey"
+                      @handleListPush="handleListPush"
+                      @start="handleStart"
+                    />
+                </a-tab-pane>
+                <a-tab-pane tab="基础控件" key="2">
+                    <collapseItem
+                      :list="basicsArray"
+                      @generateKey="generateKey"
+                      @handleListPush="handleListPush"
+                      @start="handleStart"
+                    />
+                </a-tab-pane>
+                
+            </a-tabs>
 
-            <!-- 布局控件 start -->
-            <a-collapse-panel
-              v-if="layoutArray.length > 0"
-              header="布局控件"
-              key="4"
-            >
-              <collapseItem
-                :list="layoutArray"
-                @generateKey="generateKey"
-                @handleListPush="handleListPush"
-                @start="handleStart"
-              />
-            </a-collapse-panel>
-            <!-- 布局控件 end -->
-          </a-collapse>
         </aside>
         <!-- 左侧控件区域 end -->
 
@@ -124,10 +100,10 @@
 
         <!-- 右侧控件属性区域 start -->
         <aside class="right">
-          <!-- <formProperties
+          <formProperties
             :config="data.config"
             :previewOptions="previewOptions"
-          /> -->
+          />
           <formItemProperties
             :class="{ 'show-properties': showPropertie }"
             class="form-item-properties"
@@ -166,7 +142,7 @@ import {
   customComponents
 } from "./config/formItemsConfig";
 import formItemProperties from "./module/formItemProperties";
-// import formProperties from "./module/formProperties";
+import formProperties from "./module/formProperties";
 export default {
   name: "KFormDesign",
   props: {
@@ -223,7 +199,9 @@ export default {
         "divider",
         "card",
         "grid",
-        "table"
+        "table",
+        "columnPanel_2",
+        "columnPanel_3"
       ]
     }
   },
@@ -243,7 +221,9 @@ export default {
         "table",
         "alert",
         "text",
-        "html"
+        "html",
+        "columnPanel_2",
+        "columnPanel_3"
       ],
       data: {
         list: [],
@@ -261,19 +241,9 @@ export default {
       selectItem: {
         key: ""
       },
-      basicsArray: [],
-      isShow: false
+      basicsArray:[],
+      layoutArray:[]
     };
-  },
-  created() {
-    this.$api.getCList().then(res => {
-      if (res.code == 0) {
-        this.basicsArray = res.data.filter(item =>
-          this.fields.includes(item.type)
-        );
-        this.isShow = true;
-      }
-    });
   },
   components: {
     kHeader,
@@ -285,19 +255,24 @@ export default {
     importJsonModal,
     previewModal,
     kFormComponentPanel,
-    formItemProperties
-    // formProperties
+    formItemProperties,
+    formProperties
     // draggable
   },
+  created(){
+      this.$api.getCList().then(res => {
+          if(res.code == 0){
+              this.basicsArray = res.data.fileds.filter(item => this.fields.includes(item.type));
+              this.layoutArray = res.data.layouts.filter(item => this.fields.includes(item.type));
+          }
+      })
+      this.$api.getDts({id:this.$route.query.id,val:{}}).then(res => {
+          this.data.config = res.data.config;
+          this.data.config.layout = 'horizontal';
+      })
+
+  },
   computed: {
-    // basicsArray() {
-    //   // 计算需要显示的基础字段
-    //   return basicsList.filter(item => this.fields.includes(item.type));
-    // },
-    layoutArray() {
-      // 计算需要显示的布局字段
-      return layoutList.filter(item => this.fields.includes(item.type));
-    },
     collapseDefaultActiveKey() {
       // 计算当前展开的控件列表
       let defaultActiveKey = window.localStorage.getItem(
@@ -311,6 +286,7 @@ export default {
     }
   },
   methods: {
+    //拖拽
     generateKey(list, index) {
       // 生成key值
       const key = list[index].type + "_" + new Date().getTime();
@@ -319,6 +295,8 @@ export default {
         key,
         model: key
       });
+
+
       if (this.noModel.includes(list[index].type)) {
         // 删除不需要的model属性
         delete list[index].model;
@@ -345,6 +323,7 @@ export default {
         delete record.icon;
         delete record.component;
         this.data.list.push(record);
+        console.log(this.data)
         this.handleSetSelectItem(record);
         return false;
       }
@@ -388,12 +367,9 @@ export default {
       if (newTime - this.updateTime < 100) {
         return false;
       }
-
       this.updateTime = newTime;
-
       // 设置selectItem的值
       this.selectItem = record;
-
       // 判断是否选中控件，如果选中则弹出属性面板，否则关闭属性面板
       if (record.key) {
         this.startType = record.type;

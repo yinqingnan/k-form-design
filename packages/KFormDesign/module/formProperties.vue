@@ -4,7 +4,7 @@
       表单属性设置
     </div>
     <div class="properties-body">
-      <a-form>
+      <!-- <a-form>
         <a-form-item
           v-if="typeof config.layout !== 'undefined'"
           label="表单布局"
@@ -50,7 +50,23 @@
         <a-form-item label="提示">
           实际预览效果请点击预览查看
         </a-form-item>
-      </a-form>
+      </a-form> -->
+      <a-form-item
+          label="表单名称："
+        >
+          <a-input v-model="config.ftName" :maxLength="20"/>
+      </a-form-item>
+
+      <a-form-item
+          label="表单描述："
+        >
+           <a-textarea
+            v-model="config.ftDescr"
+            placeholder="请输入描述"
+            :autoSize="{ minRows: 3, maxRows: 5 }"
+            :maxLength="200"
+          />
+      </a-form-item>
     </div>
   </div>
 </template>

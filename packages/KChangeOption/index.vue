@@ -67,6 +67,9 @@ export default {
       default: "option"
     }
   },
+  created(){
+    console.log(this.value)
+  },
   methods: {
     handleAdd() {
       // 添加

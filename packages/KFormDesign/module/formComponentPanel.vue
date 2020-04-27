@@ -91,7 +91,7 @@ export default {
         "uploadImg",
         "switch",
         "text",
-        "html"
+        "html",
       ],
       rightMenuSelectValue: {},
       showRightMenu: false,
@@ -158,6 +158,7 @@ export default {
           const rulesStr = JSON.stringify(columns[newIndex].rules);
           columns[newIndex].rules = JSON.parse(rulesStr);
         }
+
         if (typeof columns[newIndex].list !== "undefined") {
           // 深拷贝list
           columns[newIndex].list = [];
@@ -246,7 +247,7 @@ export default {
       // 删除已选择
       const traverse = array => {
         array = array.filter((element, index) => {
-          if (element.type === "grid") {
+          if (element.type === "columnPanel_2" || element.type === "columnPanel_3") {
             // 栅格布局
             element.columns.forEach(item => {
               item.list = traverse(item.list);

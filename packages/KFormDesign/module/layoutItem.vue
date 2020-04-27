@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      'layout-width': ['grid', 'table', 'card', 'divider', 'html'].includes(
+      'layout-width': ['columnPanel_2', 'table', 'card', 'divider', 'html'].includes(
         record.type
       )
     }"
@@ -126,14 +126,19 @@
     </template>
     <!-- 栅格布局 end -->
     <!-- 卡片布局 start -->
-    <template v-else-if="record.type === 'card'">
+    <template v-else-if="record.type === 'columnPanel_2'">
       <div
         class="grid-box"
         :class="{ active: record.key === selectItem.key }"
         @click.stop="handleSelectItem(record)"
       >
-        <a-card class="grid-row" :title="record.label">
-          <div class="grid-col">
+        <a-row class="grid-row" :gutter="record.options.gutter">
+          <a-col
+            class="grid-col"
+            v-for="(colItem, idnex) in record.columns"
+            :key="idnex"
+            :span="colItem.span || 0"
+          >
             <draggable
               tag="div"
               class="draggable-box"
@@ -143,14 +148,14 @@
                 animation: 180,
                 handle: '.drag-move'
               }"
-              v-model="record.list"
-              @start="$emit('dragStart', $event, record.list)"
-              @add="$emit('handleColAdd', $event, record.list)"
+              v-model="colItem.list"
+              @start="$emit('dragStart', $event, colItem.list)"
+              @add="$emit('handleColAdd', $event, colItem.list)"
             >
               <transition-group tag="div" name="list" class="list-main">
                 <layoutItem
                   class="drag-move"
-                  v-for="item in record.list"
+                  v-for="item in colItem.list"
                   :key="item.key"
                   :selectItem.sync="selectItem"
                   :startType="startType"
@@ -165,8 +170,8 @@
                 />
               </transition-group>
             </draggable>
-          </div>
-        </a-card>
+          </a-col>
+        </a-row>
 
         <div
           class="copy"

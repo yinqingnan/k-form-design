@@ -79,8 +79,7 @@ export default {
   },
   methods: {
     handleChange(value, key) {
-      // 数据变化时触发
-      console.log(value, key);
+      
     }
   }
 };

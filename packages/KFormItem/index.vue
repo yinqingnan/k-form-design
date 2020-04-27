@@ -9,7 +9,7 @@
   <a-form-item
     v-if="
       [
-        'input',
+        'text',
         'textarea',
         'date',
         'time',
@@ -24,24 +24,24 @@
         'uploadFile'
       ].includes(record.type)
     "
-    :label="record.label"
-    :label-col="config.layout === 'horizontal' ? config.labelCol : {}"
-    :wrapper-col="config.layout === 'horizontal' ? config.wrapperCol : {}"
+    :label="record.options.title.value || record.label"
+    :label-col="config.layout === 'horizontal' ? { span: 5} : {}"
+    :wrapper-col="config.layout === 'horizontal' ? { span: 19} : {}"
   >
     <!-- 单行文本 -->
     <a-input
-      :style="`width:${record.options.width}`"
-      v-if="record.type === 'input'"
+      :style="`width:${record.options.width.defValue}`"
+      v-if="record.type === 'text'"
       :disabled="disabled || record.options.disabled"
-      :placeholder="record.options.placeholder"
-      :type="record.options.type"
+      :placeholder="record.options.placeholder.value"
+      :type="record.type"
       :allowClear="record.options.clearable"
-      :maxLength="record.options.maxLength"
-      @change="handleChange($event.target.value, record.model)"
+      :maxLength="record.options.maxLength.value * 1"
+      @change="handleChange($event.target.value, record.key)"
       v-decorator="[
-        record.model, // input 的 name
+        record.key, // input 的 name
         {
-          initialValue: record.options.defaultValue, // 默认值
+          initialValue: record.options.defaultValue.value, // 默认值
           rules: record.rules // 验证规则
         }
       ]"
@@ -149,10 +149,10 @@
           : []
       "
       :disabled="disabled || record.options.disabled"
-      :placeholder="record.options.placeholder"
+      :placeholder="record.options.placeholder.value"
       @change="handleChange($event, record.model)"
       v-decorator="[
-        record.model,
+        record.key,
         {
           initialValue: record.options.defaultValue,
           rules: record.rules

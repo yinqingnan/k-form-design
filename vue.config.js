@@ -1,8 +1,5 @@
 module.exports = {
-  lintOnSave: false, //关闭eslint效验报错
-  runtimeCompiler: true, //关键点在这
-  pages: { 
-    
+  pages: {
     index: {
       // 页面入口
       entry: "examples/main.js",
@@ -25,5 +22,6 @@ module.exports = {
         javascriptEnabled: true
       }
     }
-  }
+  },
+  lintOnSave: false //代码检测关闭
 };
