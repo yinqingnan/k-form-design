@@ -6,6 +6,8 @@
  * @LastEditTime: 2020-03-28 17:37:49
  -->
 <template>
+  
+
   <!-- 月份选择 -->
   <a-month-picker
     :style="`width:${record.options.width}`"
@@ -23,13 +25,13 @@
   />
   <!-- 日期选择 -->
   <a-date-picker
-    :style="`width:${record.options.width}`"
-    v-else-if="record.type === 'date' && record.options.range === false"
+    :style="`width:${record.options.width.value}`"
+    v-else-if="record.type === 'date'"
     :disabled="record.options.disabled || parentDisabled"
-    :show-time="record.options.showTime"
-    :allowClear="record.options.clearable"
-    :placeholder="record.options.placeholder"
-    :format="record.options.format"
+    :show-time="record.options.showTime.value"
+    :allowClear="record.options.clearable.value"
+    :placeholder="record.options.placeholder.value"
+    :format="record.options.dateformat.defValue"
     @change="handleSelectChange"
     :value="date"
   />
@@ -57,17 +59,17 @@ export default {
       // date: undefined
     };
   },
+  created(){
+    console.log(this.value)
+  },
   computed: {
     date() {
-      if (
-        !this.value ||
-        (this.record.options.range && this.value.length === 0)
-      ) {
+      if (!this.value ||(this.record.options.range && this.value.length === 0)) {
         return undefined;
       } else if (this.record.options.range) {
-        return this.value.map(item => moment(item, this.record.options.format));
+        return this.value.map(item => moment(item, this.record.options.dateformat.defValue));
       } else {
-        return moment(this.value, this.record.options.format);
+        return moment(this.value, this.record.options.dateformat.defValue);
       }
     }
   },
@@ -77,9 +79,9 @@ export default {
       if (!val || (this.record.options.range && val.length === 0)) {
         date = "";
       } else if (this.record.options.range) {
-        date = val.map(item => item.format(this.record.options.format));
+        date = val.map(item => item.format(this.record.options.dateformat.defValue));
       } else {
-        date = val.format(this.record.options.format);
+        date = val.format(this.record.options.dateformat.defValue);
       }
       this.$emit("change", date);
       this.$emit("input", date);

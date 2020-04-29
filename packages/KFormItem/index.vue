@@ -7,6 +7,8 @@
  -->
 <template>
   <a-form-item
+    :validate-status="isError"
+    :help="isTip"
     v-if="
       [
         'text',
@@ -27,7 +29,9 @@
     :label="record.options.title.value || record.label"
     :label-col="config.layout === 'horizontal' ? { span: 5} : {}"
     :wrapper-col="config.layout === 'horizontal' ? { span: 19} : {}"
+
   >
+    
     <!-- 单行文本 -->
     <a-input
       :style="`width:${record.options.width.defValue}`"
@@ -35,7 +39,7 @@
       :disabled="disabled || record.options.disabled"
       :placeholder="record.options.placeholder.value"
       :type="record.type"
-      :allowClear="record.options.clearable"
+      :allowClear="record.options.clearable ? true : true"
       :maxLength="record.options.maxLength.value * 1"
       @change="handleChange($event.target.value, record.key)"
       v-decorator="[
@@ -48,22 +52,18 @@
     />
     <!-- 多行文本 -->
     <a-textarea
-      :style="`width:${record.options.width}`"
+      :style="`width:${record.options.width.defValue}`"
       v-else-if="record.type === 'textarea'"
-      :autoSize="{
-        minRows: record.options.minRows,
-        maxRows: record.options.maxRows
-      }"
       :disabled="disabled || record.options.disabled"
-      :placeholder="record.options.placeholder"
-      :allowClear="record.options.clearable"
-      :maxLength="record.options.maxLength"
+      :placeholder="record.options.placeholder.value"
+      :allowClear="record.options.clearable ? true : true"
+      :maxLength="record.options.maxLength.value * 1"
       :rows="4"
       @change="handleChange($event.target.value, record.model)"
       v-decorator="[
         record.model, // input 的 name
         {
-          initialValue: record.options.defaultValue, // 默认值
+          initialValue: record.options.defaultValue.value, // 默认值
           rules: record.rules // 验证规则
         }
       ]"
@@ -80,7 +80,7 @@
         {
           initialValue: record.options.range
             ? record.options.rangeDefaultValue
-            : record.options.defaultValue, // 默认值
+            : record.options.defaultValue.value, // 默认值
           rules: record.rules // 验证规则
         }
       ]"
@@ -101,39 +101,40 @@
     />
     <!-- 计数器 -->
     <a-input-number
+      id="error"
       v-else-if="record.type === 'number'"
-      :style="`width:${record.options.width}`"
-      :min="record.options.min"
-      :max="record.options.max"
+      :style="`width:${record.options.width.defValue}`"
+      :min="record.options.range.value.min"
+      :max="record.options.range.value.max"
       :disabled="disabled || record.options.disabled"
-      :step="record.options.step"
-      :placeholder="record.options.placeholder"
-      @change="handleChange($event, record.model)"
+      :precision="record.options.scale.defValue * 1"
+      :placeholder="record.options.placeholder ? record.options.placeholder.value : ''"
+      @change="handleChange2($event, record.model)"
+      @focus="validateNum(record.options.range.value.min,record.options.range.value.max)"
       v-decorator="[
         record.model,
         {
-          initialValue: record.options.defaultValue,
+          initialValue: record.options.defaultValue.value,
           rules: record.rules
         }
       ]"
     />
     <!-- 单选框 -->
+
     <a-radio-group
       v-else-if="record.type === 'radio'"
       :options="
         !record.options.dynamic
-          ? record.options.options
+          ? record.options.options.value
           : dynamicData[record.options.dynamicKey]
           ? dynamicData[record.options.dynamicKey]
           : []
       "
-      :disabled="disabled || record.options.disabled"
-      :placeholder="record.options.placeholder"
       @change="handleChange($event.target.value, record.model)"
       v-decorator="[
         record.model,
         {
-          initialValue: record.options.defaultValue,
+          initialValue: record.options.options.defValue,
           rules: record.rules
         }
       ]"
@@ -143,18 +144,17 @@
       v-else-if="record.type === 'checkbox'"
       :options="
         !record.options.dynamic
-          ? record.options.options
+          ? record.options.options.value
           : dynamicData[record.options.dynamicKey]
           ? dynamicData[record.options.dynamicKey]
           : []
       "
       :disabled="disabled || record.options.disabled"
-      :placeholder="record.options.placeholder.value"
       @change="handleChange($event, record.model)"
       v-decorator="[
         record.key,
         {
-          initialValue: record.options.defaultValue,
+          initialValue: record.options.options.defValue,
           rules: record.rules
         }
       ]"
@@ -176,26 +176,27 @@
       ]"
     />
     <!-- 下拉选框 -->
+
     <a-select
-      :style="`width:${record.options.width}`"
+      :style="`width:${record.options.width.defValue}`"
       v-else-if="record.type === 'select'"
-      :placeholder="record.options.placeholder"
+      :placeholder="record.options.placeholder.value"
       :showSearch="record.options.filterable"
       :options="
         !record.options.dynamic
-          ? record.options.options
+          ? record.options.options.value
           : dynamicData[record.options.dynamicKey]
           ? dynamicData[record.options.dynamicKey]
           : []
       "
       :disabled="disabled || record.options.disabled"
-      :allowClear="record.options.clearable"
+      :allowClear="record.options.clearable ? true : true"
       :mode="record.options.multiple ? 'multiple' : ''"
       @change="handleChange($event, record.model)"
       v-decorator="[
         record.model,
         {
-          initialValue: record.options.defaultValue,
+          initialValue: record.options.options.defValue == '' ? undefined : record.options.options.defValue,
           rules: record.rules
         }
       ]"
@@ -424,6 +425,8 @@ import UploadFile from "../UploadFile";
 import UploadImg from "../UploadImg";
 import KDatePicker from "../KDatePicker";
 import KTimePicker from "../KTimePicker";
+
+
 export default {
   name: "KFormItem",
   props: {
@@ -446,6 +449,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    }
+  },
+  data()  {
+    return {
+      maxNum:0,
+      minNum:0,
+      isError:null,
+      isTip:null
     }
   },
   components: {
@@ -475,7 +486,21 @@ export default {
     handleChange(value, key) {
       // change事件
       this.$emit("change", value, key);
-    }
+    },
+    handleChange2(value, key) {
+      if( this.minNum <= value * 1 && value * 1 <=this.maxNum){
+          this.$emit("change", value, key);
+          this.isError = null
+          this.isTip = null
+      }else{
+          this.isError = 'error'
+          this.isTip = '数据区间不正确'
+      }
+    },
+    validateNum(min,max){
+      this.maxNum = max;
+      this.minNum = min;
+    },
   }
 };
 </script>

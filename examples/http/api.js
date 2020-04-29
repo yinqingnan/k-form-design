@@ -10,8 +10,7 @@ import QS from "qs";
 // export const http = "http://192.168.10.92:8080"; //谭静
 //export const http = "http://192.168.10.106:8080"; //龙金伟
 //export const http = "http://192.168.10.178:8080"; //星仔
-// export const http = "http://192.168.10.64:8081"; //陈炜
-export const http = "http://192.168.10.59:8081";
+export const http = "http://192.168.10.59:8081"; //陈炜
 //export const http ="https://easy-mock.com/mock" //测试地址
 // const http = "http://192.168.10.242:20020/";
 /**
@@ -58,19 +57,19 @@ axios.interceptors.response.use(
     if (error.response.status) {
       switch (error.response.status) {
         case 404:
-            // Toast({
-            //   message: "网络请求错误",
-            //   duration: 1500,
-            //   forbidClick: true
-            // });
-          break;
-        // 其他错误，直接抛出错误提示
-        default:
           // Toast({
-          //   message: error.response.data.message,
+          //   message: "网络请求错误",
           //   duration: 1500,
           //   forbidClick: true
           // });
+          break;
+        // 其他错误，直接抛出错误提示
+        default:
+        // Toast({
+        //   message: error.response.data.message,
+        //   duration: 1500,
+        //   forbidClick: true
+        // });
       }
       return Promise.reject(error.response);
     }
@@ -95,8 +94,6 @@ export function get(url, params) {
       });
   });
 }
-
-
 
 /**
  * post方法，对应post请求

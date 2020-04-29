@@ -134,8 +134,9 @@ export default {
       delete this.data.list[newIndex].component;
       this.$emit("handleSetSelectItem", this.data.list[newIndex]);
     },
+    // 重置或者生成key值
     handleColAdd(evt, columns, isCopy = false) {
-      // 重置或者生成key值
+
       const newIndex = evt.newIndex;
       const key = columns[newIndex].type + "_" + new Date().getTime();
       if (columns[newIndex].key === "" || isCopy) {
@@ -187,14 +188,15 @@ export default {
       // 深拷贝数据
       const listString = JSON.stringify(columns[newIndex]);
       columns[newIndex] = JSON.parse(listString);
+
       this.$emit("handleSetSelectItem", columns[newIndex]);
     },
+    // 拖拽结束,自动选择拖拽的控件项
     dragStart(evt, list) {
-      // 拖拽结束,自动选择拖拽的控件项
       this.$emit("handleSetSelectItem", list[evt.oldIndex]);
     },
+    // 修改选择Item
     handleSelectItem(record) {
-      // 修改选择Item
       this.$emit("handleSetSelectItem", record);
     },
     handleCopy(isCopy = true, data) {

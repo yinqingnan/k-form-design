@@ -8,7 +8,6 @@
       <p class="hint-box" v-show="selectItem.key === ''">未选择控件</p>
       <p class="hint-box" v-show="selectItem.type == 'columnPanel_2' || selectItem.type == 'columnPanel_3'">此控件无可修改属性</p>
       <a-form v-show="selectItem.key !== ''">
-        
         <!-- 标题 -->
         <a-form-item
           v-if="typeof selectItem.label !== 'undefined' && typeof selectItem.options.title !== 'undefined'"
@@ -48,7 +47,7 @@
           <a-input v-model="options.placeholder.value" :maxLength="20"/>
         </a-form-item>
 
-        <a-form-item
+        <!-- <a-form-item
           v-if="selectItem.type === 'textarea'"
           label="自适应内容高度"
         >
@@ -62,20 +61,14 @@
             v-model="options.maxRows"
             placeholder="最大高度"
           />
-        </a-form-item>
+        </a-form-item> -->
         <!-- 宽度 -->
-        <a-form-item v-if="typeof options.width !== 'undefined'" :label="options.width.name">
-          <!-- <a-input placeholder="请输入"  /> -->
-
+        <a-form-item v-if="typeof options.width !== 'undefined' && selectItem.type != 'date'" :label="options.width.name">
           <a-radio-group v-model="options.width.defValue">
             <a-radio :value="itemLB.value" :style="radioStyle" v-for="itemLB in options.width.value">
                 {{itemLB.label}}
             </a-radio>
           </a-radio-group>
-
-
-
-
         </a-form-item>
         <a-form-item v-if="typeof options.height !== 'undefined'" label="高度">
           <a-input-number v-model="options.height" />
@@ -83,12 +76,28 @@
         <a-form-item v-if="typeof options.step !== 'undefined'" label="步长">
           <a-input-number v-model="options.step" placeholder="请输入" />
         </a-form-item>
-        <a-form-item v-if="typeof options.min !== 'undefined'" label="最小值">
-          <a-input-number v-model="options.min" placeholder="请输入" />
+
+        <a-form-item v-if="selectItem.type === 'number'" :label="options.range.name">
+          <a-input-number 
+            @change="Change(options,'one',selectItem)"
+            @blur="clear(options,'one',selectItem)"
+            v-model="options.range.value.min"
+          />
+          --
+           <a-input-number
+             @blur="clear(options,'two',selectItem)" 
+             @change="Change(options,'two',selectItem)" 
+             v-model="options.range.value.max"
+           />
         </a-form-item>
 
-        <a-form-item v-if="typeof options.maxLength !== 'undefined'" :label="options.maxLength.name">
-          <a-input-number v-model="options.maxLength.value" :max="200" placeholder="请输入" />
+        <a-form-item v-if="selectItem.type === 'number'" :label="options.scale.name">
+            
+            <a-radio-group v-model="options.scale.defValue">
+              <a-radio :value="itemLB.value" :style="radioStyle" v-for="itemLB in options.scale.value">
+                  {{itemLB.label}}
+              </a-radio>
+            </a-radio-group>
         </a-form-item>
 
         <a-form-item
@@ -98,23 +107,23 @@
           <a-input v-model="options.dictCode"></a-input>
         </a-form-item>
         <!-- 选项配置及动态数据配置 start -->
-        <!-- <a-form-item
-          v-if="typeof options !== 'undefined'"
-          :label="options.options.name"
+        <a-form-item
+          v-if="selectItem.type === 'radio' || selectItem.type === 'checkbox' || selectItem.type === 'select'"
+          :label="selectItem.options.options.name"
         >
-          <a-radio-group buttonStyle="solid" v-model="options.dynamic">
+          <!-- <a-radio-group buttonStyle="solid" v-model="options.options.dynamic">
             <a-radio-button :value="false">静态数据</a-radio-button>
             <a-radio-button :value="true">动态数据</a-radio-button>
-          </a-radio-group>
+          </a-radio-group> -->
 
-          <a-input
+          <!-- <a-input
             v-show="options.dynamic"
             v-model="options.dynamicKey"
             placeholder="动态数据变量名"
           ></a-input>
-          {{options.value}}
-          <KChangeOption v-model="options.value" />
-        </a-form-item> -->
+          {{options.value}} -->
+          <KChangeOption v-model="selectItem.options.options.value" />
+        </a-form-item>
         <!-- 选项配置及动态数据配置 end -->
         <a-form-item v-if="selectItem.type === 'grid'" label="栅格间距">
           <a-input-number
@@ -129,6 +138,7 @@
         <a-form-item v-if="selectItem.type === 'switch'" label="默认值">
           <a-switch v-model="options.defaultValue" />
         </a-form-item>
+
         <a-form-item
           v-if="['number', 'slider'].indexOf(selectItem.type) >= 0"
           label="默认值"
@@ -137,9 +147,10 @@
             :step="options.step"
             :max="options.max"
             :min="options.min"
-            v-model="options.defaultValue"
+            v-model="options.defaultValue.value"
           />
         </a-form-item>
+
         <a-form-item v-if="selectItem.type === 'rate'" label="默认值">
           <a-rate
             v-model="options.defaultValue"
@@ -148,28 +159,29 @@
           />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'select'" label="默认值">
-          <a-select :options="options.options" v-model="options.defaultValue" />
+          <a-select 
+            :options="selectItem.options.options.value" 
+            v-model="selectItem.options.options.defValue == '' ? undefined : selectItem.options.options.defValue"
+            placeholder="请选择"
+          />
         </a-form-item>
+
         <a-form-item v-if="selectItem.type === 'radio'" label="默认值">
           <a-radio-group
-            :options="options.options"
-            v-model="options.defaultValue"
+            :options="selectItem.options.options.value"
+            v-model="selectItem.options.options.defValue"
           />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'checkbox'" label="默认值">
           <a-checkbox-group
-            :options="options.options"
-            v-model="options.defaultValue"
+            :options="selectItem.options.options.value"
+            v-model="selectItem.options.options.defValue"
           />
         </a-form-item>
         <!-- 日期选择器默认值 start -->
-        <a-form-item v-if="selectItem.type === 'date'" label="默认值">
+        <!-- <a-form-item v-if="selectItem.type === 'date'" :label="options.defaultValue.name">
           <a-input
-            v-if="!options.range"
-            v-model="options.defaultValue"
-            :placeholder="
-              typeof options.format === 'undefined' ? '' : options.format
-            "
+            v-model="options.defaultValue.value"
           />
           <a-input
             v-if="options.range"
@@ -185,8 +197,17 @@
               typeof options.format === 'undefined' ? '' : options.format
             "
           />
-        </a-form-item>
+        </a-form-item> -->
         <!-- 日期选择器默认值 end -->
+
+        <a-form-item v-if="selectItem.type === 'date'" :label="options.currentDate.name">
+            <a-checkbox v-model="options.currentDate.value" @change="dateChange(options.currentDate.value,options)">{{options.currentDate.name}}</a-checkbox>
+        </a-form-item>
+
+        <a-form-item v-if="selectItem.type === 'date'" :label="options.showTime.name">
+            <a-checkbox v-model="options.showTime.value">{{options.showTime.name}}</a-checkbox>
+        </a-form-item>
+
 
         <!-- 默认值 -->
         <a-form-item
@@ -209,9 +230,7 @@
           <a-input
             v-model="options.defaultValue.value"
             :maxLength="20"
-            :placeholder="
-              typeof options.format === 'undefined' ? '' : options.format
-            "
+            
           />
         </a-form-item>
         <!-- 修改html -->
@@ -221,14 +240,17 @@
             :autoSize="{ minRows: 4, maxRows: 8 }"
           />
         </a-form-item>
+
         <a-form-item
-          v-if="typeof options.format !== 'undefined'"
-          label="时间格式"
+          v-if="typeof options.dateformat !== 'undefined'"
+          :label="options.dateformat.name"
         >
-          <a-input
-            v-model="options.format"
-            placeholder="时间格式如：YYYY-MM-DD HH:mm:ss"
+          <a-select 
+            :options="options.dateformat.value" 
+            v-model="options.dateformat.defValue"
+            placeholder="请选择"
           />
+
         </a-form-item>
 
         <a-form-item
@@ -327,7 +349,7 @@
           <kCheckbox v-model="options.showRequiredMark" label="显示必选标记" />
         </a-form-item> -->
 
-        <a-form-item
+        <!-- <a-form-item
           v-if="
             typeof options.disabled !== 'undefined' ||
               typeof options.readonly !== 'undefined' ||
@@ -400,7 +422,7 @@
             v-model="options.drag"
             label="允许拖拽"
           />
-        </a-form-item>
+        </a-form-item> -->
         <!-- 校验 -->
         <a-form-item
           v-if="
@@ -449,6 +471,7 @@
  */
 import KChangeOption from "../../KChangeOption/index.vue";
 import kCheckbox from "../../KCheckbox/index.vue";
+import moment from "moment";
 export default {
   name: "formItemProperties",
   data() {
@@ -467,10 +490,57 @@ export default {
       required: true
     }
   },
+  methods: {
+      Change(val,type,list){
+          if(type == 'one'){
+              if( val.range.value.min == '' ){
+                  val.range.value.min = null;
+              }
+          }else{
+              if( val.range.value.max == ''){
+                  val.range.value.max = null;
+              }
+          }
+      },
+      clear(val,type,list){
+          if(val.range.value.min !== '' && val.range.value.max !== ''){
+              if(type == 'one'){
+                  if(val.range.value.min > val.range.value.max){
+                      val.range.value.min = null;
+                      this.$message.warning('最小值不能大于最大值');
+                  }
+              }else{
+                  if(val.range.value.min > val.range.value.max){
+                    val.range.value.max = null;
+                    this.$message.warning('最小值不能大于最大值');  
+                  }  
+              }
+          } 
+      },
+      dateChange(val,time){
+        // 
+        if(val){
+            let data = moment(new Date(), time.dateformat.defValue).valueOf();
+            time.defaultValue.value = data;
+        }else{
+            time.defaultValue.value  = null;
+        }
+
+      }
+  },
   watch: {
     selectItem(val) {
       this.options = val.options || {};
     }
+  },
+  computed:{
+      isMin(val){
+          if(val != null){
+              return val;
+          }else{
+              return 0;
+          }
+      }    
   },
   components: {
     KChangeOption,

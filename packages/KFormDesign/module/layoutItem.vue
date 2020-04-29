@@ -126,7 +126,7 @@
     </template>
     <!-- 栅格布局 end -->
     <!-- 卡片布局 start -->
-    <template v-else-if="record.type === 'columnPanel_2'">
+    <template v-else-if="record.type === 'columnPanel_2' || record.type === 'columnPanel_3'">
       <div
         class="grid-box"
         :class="{ active: record.key === selectItem.key }"

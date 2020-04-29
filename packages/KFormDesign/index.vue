@@ -51,7 +51,7 @@
                       @start="handleStart"
                     />
                 </a-tab-pane>
-                
+
             </a-tabs>
 
         </aside>
@@ -264,6 +264,7 @@ export default {
           if(res.code == 0){
               this.basicsArray = res.data.fileds.filter(item => this.fields.includes(item.type));
               this.layoutArray = res.data.layouts.filter(item => this.fields.includes(item.type));
+              this.isShow = true;
           }
       })
       this.$api.getDts({id:this.$route.query.id,val:{}}).then(res => {
@@ -286,7 +287,7 @@ export default {
     }
   },
   methods: {
-    //拖拽
+    //拖拽生成动态key
     generateKey(list, index) {
       // 生成key值
       const key = list[index].type + "_" + new Date().getTime();
@@ -295,8 +296,6 @@ export default {
         key,
         model: key
       });
-
-
       if (this.noModel.includes(list[index].type)) {
         // 删除不需要的model属性
         delete list[index].model;
@@ -367,6 +366,7 @@ export default {
       if (newTime - this.updateTime < 100) {
         return false;
       }
+
       this.updateTime = newTime;
       // 设置selectItem的值
       this.selectItem = record;

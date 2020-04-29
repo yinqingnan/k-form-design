@@ -1,7 +1,7 @@
 <template>
   <!-- 栅格布局 -->
   <a-row
-    v-if="record.type === 'grid'"
+    v-if="record.type === 'columnPanel_2' || record.type === 'columnPanel_3'"
     class="grid-row"
     :gutter="record.options.gutter"
   >
