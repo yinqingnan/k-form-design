@@ -1,8 +1,8 @@
 {
   "name": "y-form",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "private": false,
-  "description": "这是一个基于vue、ant-design-vue的表单设计器",
+  "description": "这是k-form--design表单设计器的修改版",
   "license": "MIT",
   "repository": {
     "type": "git",

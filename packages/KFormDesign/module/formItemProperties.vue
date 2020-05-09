@@ -518,9 +518,8 @@ export default {
           } 
       },
       dateChange(val,time){
-        // 
         if(val){
-            let data = moment(new Date(), time.dateformat.defValue).valueOf();
+            let data = moment(new Date()).format(time.dateformat.defValue)
             time.defaultValue.value = data;
         }else{
             time.defaultValue.value  = null;

@@ -10,15 +10,15 @@ import QS from "qs";
 // export const http = "http://192.168.10.92:8080"; //谭静
 //export const http = "http://192.168.10.106:8080"; //龙金伟
 //export const http = "http://192.168.10.178:8080"; //星仔
-export const http = "http://192.168.10.59:8081"; //陈炜
+// export const http = "http://192.168.10.59:8081"; //陈炜
 //export const http ="https://easy-mock.com/mock" //测试地址
-// const http = "http://192.168.10.242:20020/";
+const http = "http://192.168.10.242:20030";
 /**
  * 配置默认请求地址
  */
-(axios.defaults.baseURL = http),
-  // 请求超时时间
-  (axios.defaults.timeout = 10000);
+axios.defaults.baseURL = http;
+// 请求超时时间
+axios.defaults.timeout = 10000;
 
 // post请求头
 // axios.defaults.headers.post["Content-Type"] =
